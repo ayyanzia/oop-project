@@ -6,6 +6,11 @@ public class Main {
         Vehicle car1 = new Vehicle("1234", "Car", LocalTime.now());
         System.out.println("Entry time :" + car1.getEntryTime());
 
+        while (true)
+            {
+                System.out.println("Enter choice: ");
+                
+
 
         }
     }
