@@ -16,4 +16,9 @@ public class Truck extends Vehicle{
     public String getVehicleType() {
         return "Truck";
     }
+
+    public double calculateFees(long durationInMinutes) {
+        double ratePerHour = 100;
+        return ((double)durationInMinutes/60) * ratePerHour;
+    }
 }
