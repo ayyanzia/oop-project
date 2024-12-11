@@ -16,4 +16,10 @@ public class Bike extends Vehicle{
     public String getVehicleType() {
         return "Bike";
     }
+
+    @Override
+    public double calculateFees(long durationInMinutes) {
+        double ratePerHour = 30;
+        return ((double)durationInMinutes/60) * ratePerHour;
+    }
 }
