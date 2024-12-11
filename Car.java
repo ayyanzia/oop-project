@@ -16,5 +16,12 @@ public class Car extends Vehicle {
     public String getVehicleType() {
         return "Car";
     }
+
+    @Override
+    public double calculateFees(long durationInMinutes) {
+        double ratePerHour = 50;
+        return ((double) durationInMinutes /60) * ratePerHour;
+    }
 }
+
 
