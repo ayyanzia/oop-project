@@ -1,29 +1,27 @@
 import java.time.LocalTime;
 
-public class Car extends Vehicle {
-    private int numDoors;
+public class Truck extends Vehicle{
+    private double cargoCapacity;
 
-    public Car(String vehicleNum, LocalTime entryTime, int numDoors) {
+    public Truck(String vehicleNum, LocalTime entryTime, double cargoCapacity) {
         super(vehicleNum, entryTime);
-        this.numDoors = numDoors;
+        this.cargoCapacity = cargoCapacity;
     }
 
-    public int getNumDoors(){
-        return numDoors;
+    public double getCargoCapacity(){
+        return cargoCapacity;
     }
 
     @Override
     public String getVehicleType() {
-        return "Car";
+        return "Truck";
     }
 
-    @Override
     public double calculateFees(long durationInMinutes) {
-        double ratePerHour = 50;
+        double ratePerHour = 100;
         if (durationInMinutes < 60 ){
             durationInMinutes = 60;
         }
-        return ((double) durationInMinutes /60) * ratePerHour;
+        return ((double)durationInMinutes/60) * ratePerHour;
     }
 }
-
