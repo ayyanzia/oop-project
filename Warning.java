@@ -22,7 +22,7 @@ public class Warning {
     }
 
     public void displayWarning(){
-        System.out.println("WARNING " + message);
+        System.out.println(message);
         System.out.println("Vehicle " + vehicle.getVehicleType() + " (" + vehicle.getVehicleNum() + ")" );
         System.out.println("SpotID: " + parkingSpot.getSpotID());
     }
