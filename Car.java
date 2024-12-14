@@ -20,8 +20,10 @@ public class Car extends Vehicle {
     @Override
     public double calculateFees(long durationInMinutes) {
         double ratePerHour = 50;
+        if (durationInMinutes < 60 ){
+            durationInMinutes = 60;
+        }
         return ((double) durationInMinutes /60) * ratePerHour;
     }
 }
-
 
