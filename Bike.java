@@ -20,6 +20,9 @@ public class Bike extends Vehicle{
     @Override
     public double calculateFees(long durationInMinutes) {
         double ratePerHour = 30;
+        if (durationInMinutes < 60 ){
+            durationInMinutes = 60;
+        }
         return ((double)durationInMinutes/60) * ratePerHour;
     }
 }
