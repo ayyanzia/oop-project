@@ -4,7 +4,7 @@ public class ParkingSpot {
     private String spotType;
 
 
-    public ParkingSpot(String spotID, Boolean occupancyStatus,String spotType){
+    public ParkingSpot(String spotID, Boolean occupancyStatus, String spotType){
         this.spotID = spotID;
         this.occupancyStatus = false;
         this.spotType = spotType;
