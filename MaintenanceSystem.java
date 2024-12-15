@@ -1,8 +1,9 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 public class MaintenanceSystem {
-        public void scheduleMaintenance(String task, LocalDateTime time) {
+        public void scheduleMaintenance(String task, LocalDate date) {
             System.out.println("Scheduled Maintenance Task: " + task);
-            System.out.println("Scheduled Time: " + time);
+            System.out.println("Scheduled Time: " + date);
         }
 
         public void performMaintenance(String task) {
@@ -10,10 +11,10 @@ public class MaintenanceSystem {
             System.out.println("Task Completed Successfully.");
         }
 
-        public void logMaintenance(String task, LocalDateTime time) {
+        public void logMaintenance(String task, LocalDate date) {
             System.out.println("Maintenance Log:");
             System.out.println("Task: " + task);
-            System.out.println("Completed at: " + time);
+            System.out.println("Completed at: " + date);
         }
     }
 
