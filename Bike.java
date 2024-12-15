@@ -26,3 +26,4 @@ public class Bike extends Vehicle{
         return ((double)durationInMinutes/60) * ratePerHour;
     }
 }
+
