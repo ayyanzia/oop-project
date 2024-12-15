@@ -20,7 +20,7 @@ public class ParkingLot {
         for (ParkingSpot spot : spots) {
             if (!spot.getOccupancyStatus()) {
                 if(!spot.isCompatibleWith(vehicle)){
-                    Warning warning = new Warning("Incompatible vehicle type." , vehicle, spot);
+                    Warning warning = new Warning("Incompatible vehicle type for this spot. " , vehicle, spot);
                     warning.displayWarning();
                     continue; // look for another spot.
                 }
@@ -29,7 +29,7 @@ public class ParkingLot {
             }
 
         }
-        throw new IllegalStateException("No spot available for this vehicle type.");
+        throw new IllegalStateException("We are sorry. No spot available for this vehicle type as the parking lot is full.");
     }
 
     public Ticket parkVehicle(Vehicle vehicle){
@@ -39,4 +39,7 @@ public class ParkingLot {
         return ticket;
     }
 
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
 }
