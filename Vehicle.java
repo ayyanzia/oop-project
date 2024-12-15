@@ -1,5 +1,5 @@
 import java.time.LocalTime;
-public abstract class Vehicle {
+public abstract class Vehicle implements Bill {
     protected String vehicleNum;
     protected LocalTime entryTime;
 
@@ -27,6 +27,3 @@ public abstract class Vehicle {
 
     public abstract String getVehicleType();
 }
-
-
-
