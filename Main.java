@@ -1,8 +1,8 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.*;
 import java.time.Duration;
+
 public class Main {
     public static void main(String[] args) {
         // Initialize parking spots
@@ -10,7 +10,10 @@ public class Main {
                 new ParkingSpot("A1", false, "Car"),
                 new ParkingSpot("A2", false, "Car"),
                 new ParkingSpot("B1", false, "Bike"),
-                new ParkingSpot("C1", false, "Truck")
+                new ParkingSpot("B2", false, "Bike"),
+                new ParkingSpot("C1", false, "Truck"),
+                new ParkingSpot("C2", false, "Truck")
+
         );
 
         // Initialize parking lot
@@ -21,37 +24,27 @@ public class Main {
         MaintenanceSystem maintenanceSystem = new MaintenanceSystem();
         SafetySystem safetySystem = new SafetySystem(parkingLot);
 
-        // Main interaction loop
+        // Main loop of the interface
         while (true) {
             System.out.println("\nWelcome to the Parking System!");
             System.out.println("1. Customer Interface");
             System.out.println("2. Staff Interface");
             System.out.println("3. Exit");
 
-            int choice;
-            try {
-                System.out.print("Enter your choice: ");
-                choice = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 3.");
-                scanner.next(); // clear the input
-                continue;
-            }
+            int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 3);
 
             switch (choice) {
                 case 1:
-                    // Customer Interface (unchanged from original logic)
                     customerInterface(parkingLot, scanner);
                     break;
 
                 case 2:
-                    // Staff Interface
                     staffInterface(parkingLot, scanner, maintenanceSystem, safetySystem);
                     break;
 
                 case 3:
                     System.out.println("Exiting system. Thank you for using the parking system.");
-                    return; // Exit the program
+                    return;
 
                 default:
                     System.out.println("Invalid option. Please choose 1, 2, or 3.");
@@ -59,7 +52,7 @@ public class Main {
         }
     }
 
-    // Customer Interface Logic
+    // Customer interface logic
     private static void customerInterface(ParkingLot parkingLot, Scanner scanner) {
         while (true) {
             System.out.println("\nCustomer Interface:");
@@ -67,38 +60,30 @@ public class Main {
             System.out.println("2. Find My Vehicle");
             System.out.println("3. Exit the System");
 
-            int choice;
-            try {
-                System.out.print("Enter your choice: ");
-                choice = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 3.");
-                scanner.next(); // clear the input
-                continue;
-            }
+            int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 3);
 
             switch (choice) {
                 case 1:
                     System.out.println("Enter Vehicle Number:");
                     String vehicleNum = scanner.next();
+//                   if(vehicleNum.equals(vehicleNum))
+//                   {
+//                       System.out.println("This vehicle is already present and not allowed");
+//                   break;}
+
                     System.out.println("Enter Vehicle Type (Car/Bike/Truck/Van/Lorry):");
                     String vehicleType = scanner.next();
                     LocalTime entryTime = LocalTime.now();
 
-                    // Create vehicle based on type
                     Vehicle vehicle;
                     if (vehicleType.equalsIgnoreCase("Car")) {
-                        System.out.println("Enter number of doors:");
-                        int numDoors = scanner.nextInt();
+                        int numDoors = getValidatedInt(scanner, "Enter number of doors: ", 2, 4);
                         vehicle = new Car(vehicleNum, entryTime, numDoors);
                     } else if (vehicleType.equalsIgnoreCase("Bike")) {
-                        System.out.println("Does the bike have a sidecar? (true/false):");
-                        boolean hasSideCar = scanner.nextBoolean();
+                        boolean hasSideCar = getValidatedBoolean(scanner, "Does the bike have a sidecar? (true/false): ");
                         vehicle = new Bike(vehicleNum, entryTime, hasSideCar);
                     } else if (vehicleType.equalsIgnoreCase("Truck") || vehicleType.equalsIgnoreCase("Van") || vehicleType.equalsIgnoreCase("Lorry")) {
-                        // Existing logic for Truck
-                        System.out.println("Enter cargo capacity in kg to one decimal place:");
-                        double cargoCapacity = scanner.nextDouble();
+                        double cargoCapacity = getValidatedDouble(scanner, "Enter cargo capacity in kg: ", 0, 10000);
                         vehicle = new Truck(vehicleNum, entryTime, cargoCapacity);
                     } else {
                         System.out.println("Invalid vehicle type. Please enter Car, Bike, Truck, Van, or Lorry.");
@@ -106,7 +91,6 @@ public class Main {
                     }
 
                     try {
-                        // Park vehicle
                         Ticket ticket = parkingLot.parkVehicle(vehicle);
                         System.out.println("Your vehicle is parked at Spot: " + ticket.getParkingSpot().getSpotID());
                         System.out.println("Ticket ID: " + ticket.getTicketID());
@@ -118,6 +102,7 @@ public class Main {
                 case 2:
                     System.out.println("Enter your Vehicle Number:");
                     String vehicleNumber = scanner.next();
+
                     Ticket foundTicket = null;
                     for (Ticket ticket : parkingLot.getTickets()) {
                         if (ticket.getVehicle().getVehicleNum().equalsIgnoreCase(vehicleNumber)) {
@@ -127,29 +112,26 @@ public class Main {
                     }
 
                     if (foundTicket != null) {
-                        System.out.println("Your vehicle is parked at the compatible Spot: " + foundTicket.getParkingSpot().getSpotID());
+                        System.out.println("Your vehicle is parked at Spot: " + foundTicket.getParkingSpot().getSpotID());
                         System.out.println("Ticket ID: " + foundTicket.getTicketID());
 
-                        // Calculate the parking fee when the vehicle exits
-                        System.out.println("Press Enter to exit your vehicle from the parking lot...");
-                        scanner.nextLine(); // Consume any extra new line character
-                        scanner.nextLine(); // Wait for user to press enter
+                        System.out.println("Press Enter to exit your vehicle from the parking lot.");
+                        scanner.nextLine();
+                        scanner.nextLine(); // Wait for user to press Enter
 
-                        // Set the exit time to now
                         LocalTime exitTime = LocalTime.now();
                         foundTicket.setExitTime(exitTime);
 
-                        // Calculate duration and fees
                         String duration = foundTicket.calculateDuration();
-                        double fee = foundTicket.getVehicle().calculateFees(Duration.between(foundTicket.getVehicle().getEntryTime(), exitTime).toMinutes());
+                        double fee = foundTicket.getVehicle().calculateFees(
+                                Duration.between(foundTicket.getVehicle().getEntryTime(), exitTime).toMinutes());
+
                         System.out.println("Your vehicle has been parked for: " + duration);
                         System.out.println("Total fee: " + fee + " PKR");
 
-                        // Process payment
                         PaymentProcessing paymentProcessing = new PaymentProcessing();
                         paymentProcessing.processPayment(foundTicket.getVehicle(), fee);
 
-                        // Free the parking spot
                         foundTicket.getParkingSpot().setOccupancyStatus(false);
                         System.out.println("Your vehicle has exited the parking lot.");
                     } else {
@@ -159,7 +141,7 @@ public class Main {
 
                 case 3:
                     System.out.println("Exiting Customer Interface.");
-                    return; // Exit the customer interface
+                    return;
 
                 default:
                     System.out.println("Invalid option. Please choose 1, 2, or 3.");
@@ -178,41 +160,29 @@ public class Main {
             System.out.println("5. Handle Theft Emergency");
             System.out.println("6. Exit Staff Interface");
 
-            int choice;
-            try {
-                System.out.print("Enter your choice: ");
-                choice = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 6.");
-                scanner.next(); // clear the input
-                continue;
-            }
+            int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 6);
 
             switch (choice) {
                 case 1:
                     System.out.println("Enter maintenance task:");
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
                     String task = scanner.nextLine();
-                    System.out.println("Enter maintenance date (YYYY-MM-DD):");
-                    String timeInput = scanner.nextLine().trim();  // Trim the input to remove extra spaces
-                    LocalDate date = LocalDate.parse(timeInput);    // Use LocalDate for just the date
+                    LocalDate date = getValidatedDate(scanner, "Enter maintenance date (YYYY-MM-DD): ");
                     maintenanceSystem.scheduleMaintenance(task, date);
                     break;
 
                 case 2:
-                    System.out.println("Enter maintenance task to perform:");
-                    scanner.nextLine(); // Consume newline
-                    String performTask = scanner.nextLine();
-                    maintenanceSystem.performMaintenance(performTask);
+                    System.out.println("Write the task on which you want to perform maintenance:");
+                    scanner.nextLine();
+                    String performTask = scanner.nextLine();    //takes string input
+                    maintenanceSystem.performMaintenance(performTask); //maintainance system class method called
                     break;
 
                 case 3:
                     System.out.println("Enter maintenance task to log:");
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); // adds new line or skips one takes input in next line
                     String logTask = scanner.nextLine();
-                    System.out.println("Enter completion date (YYYY-MM-DD):");
-                    String logTimeInput = scanner.nextLine();
-                    LocalDate logDate = LocalDate.parse(logTimeInput);  // Use LocalDate for just the date
+                    LocalDate logDate = getValidatedDate(scanner, "Enter completion date (YYYY-MM-DD): ");
                     maintenanceSystem.logMaintenance(logTask, logDate);
                     break;
 
@@ -223,14 +193,14 @@ public class Main {
                 case 5:
                     System.out.println("Enter vehicle number for theft report:");
                     String vehicleNum = scanner.next();
-                    Vehicle vehicle = null;
+                    Vehicle vehicle = null; //obj value null
                     for (Ticket ticket : parkingLot.getTickets()) {
                         if (ticket.getVehicle().getVehicleNum().equals(vehicleNum)) {
                             vehicle = ticket.getVehicle();
                             break;
                         }
                     }
-                    if (vehicle != null) {
+                    if (vehicle != null) {  //if it is null, means no vehicle present
                         safetySystem.handleTheft(vehicle);
                     } else {
                         System.out.println("Vehicle not found in the parking lot.");
@@ -239,10 +209,68 @@ public class Main {
 
                 case 6:
                     System.out.println("Exiting Staff Interface.");
-                    return; // Exit the staff interface
+                    return;
 
                 default:
                     System.out.println("Invalid option. Please choose 1, 2, 3, 4, 5, or 6.");
+            }
+        }
+    }
+
+    // Helper Methods for Validation
+    private static int getValidatedInt(Scanner scanner, String prompt, int min, int max) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                int input = scanner.nextInt();
+                if (input >= min && input <= max) {
+                    return input;
+                } else {
+                    System.out.println("Input must be between " + min + " and " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next(); // Clear invalid input
+            }
+        }
+    }
+
+    private static double getValidatedDouble(Scanner scanner, String prompt, double min, double max) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double input = scanner.nextDouble();
+                if (input >= min && input <= max) {
+                    return input;
+                } else {
+                    System.out.println("Input must be between " + min + " and " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.next(); // Clear invalid input
+            }
+        }
+    }
+
+    private static boolean getValidatedBoolean(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            if (scanner.hasNextBoolean()) {
+                return scanner.nextBoolean();
+            } else {
+                System.out.println("Invalid input. Please enter true or false.");
+                scanner.next(); // Clear invalid input
+            }
+        }
+    }
+
+    private static LocalDate getValidatedDate(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return LocalDate.parse(scanner.next().trim());
+            } catch (Exception e) {
+                System.out.println("Invalid date format. Please enter a valid date in the format YYYY-MM-DD.");
             }
         }
     }
