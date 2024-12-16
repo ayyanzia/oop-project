@@ -21,11 +21,11 @@ public class SafetySystem {
     public void evacuateVehicles(){
         for (ParkingSpot spot : parkingLot.getSpots()){
             if(spot.getOccupancyStatus()){
-                System.out.println("Evacuating vehicle from spot " + spot.getSpotID());
+                System.out.println("Please whoever owns  " + spot.getSpotID() + " vehicle." + " start evacuating");
                 spot.setOccupancyStatus(false);
             }
         }
-        System.out.println("All vehicles evacuated");
+        System.out.println("All vehicles start evacuating");
     }
 
     public void alertFireDepartment(){
