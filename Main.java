@@ -5,7 +5,7 @@ import java.time.Duration;
 
 public class Main {
     public static void main(String[] args) {
-        // Initialize parking spots
+        // Initializing parking spots
         List<ParkingSpot> spots = Arrays.asList(
                 new ParkingSpot("A1", false, "Car"),
                 new ParkingSpot("A2", false, "Car"),
@@ -16,11 +16,11 @@ public class Main {
 
         );
 
-        // Initialize parking lot
+        // Initializes parking lot
         ParkingLot parkingLot = new ParkingLot(spots);
         Scanner scanner = new Scanner(System.in);
 
-        // Initialize Maintenance and Safety systems
+        // Initialize sMaintenance and Safety systems
         MaintenanceSystem maintenanceSystem = new MaintenanceSystem();
         SafetySystem safetySystem = new SafetySystem(parkingLot);
 
@@ -31,7 +31,7 @@ public class Main {
             System.out.println("2. Staff Interface");
             System.out.println("3. Exit");
 
-            int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 3);
+            int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 3); // method call to handle errors
 
             switch (choice) {
                 case 1:
@@ -58,7 +58,7 @@ public class Main {
             System.out.println("\nCustomer Interface:");
             System.out.println("1. Park a Vehicle");
             System.out.println("2. Find My Vehicle");
-            System.out.println("3. Exit the System");
+            System.out.println("3. Exit Customer interface");
 
             int choice = getValidatedInt(scanner, "Enter your choice: ", 1, 3);
 
@@ -115,27 +115,38 @@ public class Main {
                         System.out.println("Your vehicle is parked at Spot: " + foundTicket.getParkingSpot().getSpotID());
                         System.out.println("Ticket ID: " + foundTicket.getTicketID());
 
-                        System.out.println("Press Enter to exit your vehicle from the parking lot.");
-                        scanner.nextLine();
-                        scanner.nextLine(); // Wait for user to press Enter
+                        while (true) { // Keep asking until valid input is given
+                            System.out.println("\nPress Enter to exit your vehicle from the parking lot or type 'back' to return to the Customer Interface.");
+                            scanner.nextLine(); // Consume any leftover newlines
+                            String input = scanner.nextLine().trim();
 
-                        LocalTime exitTime = LocalTime.now();
-                        foundTicket.setExitTime(exitTime);
+                            if (input.equalsIgnoreCase("back")) {
+                                System.out.println("Returning to Customer Interface...");
+                                break; // Go back to the customer menu
+                            } else if (input.isEmpty()) {
+                                // Process vehicle exit
+                                LocalTime exitTime = LocalTime.now();
+                                foundTicket.setExitTime(exitTime);
 
-                        String duration = foundTicket.calculateDuration();
-                        double fee = foundTicket.getVehicle().calculateFees(
-                                Duration.between(foundTicket.getVehicle().getEntryTime(), exitTime).toMinutes());
+                                String duration = foundTicket.calculateDuration();
+                                double fee = foundTicket.getVehicle().calculateFees(
+                                        Duration.between(foundTicket.getVehicle().getEntryTime(), exitTime).toMinutes());
 
-                        System.out.println("Your vehicle has been parked for: " + duration);
-                        System.out.println("Total fee: " + fee + " PKR");
+                                System.out.println("Your vehicle has been parked for: " + duration);
+                                System.out.println("Total fee: " + fee + " PKR");
 
-                        PaymentProcessing paymentProcessing = new PaymentProcessing();
-                        paymentProcessing.processPayment(foundTicket.getVehicle(), fee);
+                                PaymentProcessing paymentProcessing = new PaymentProcessing();
+                                paymentProcessing.processPayment(foundTicket.getVehicle(), fee);
 
-                        foundTicket.getParkingSpot().setOccupancyStatus(false);
-                        System.out.println("Your vehicle has exited the parking lot.");
+                                foundTicket.getParkingSpot().setOccupancyStatus(false);
+                                System.out.println("Your vehicle has exited the parking lot.");
+                                break;
+                            } else {
+                                System.out.println("Invalid input. Please press Enter to exit or type 'back' to return.");
+                            }
+                        }
                     } else {
-                        System.out.println("Vehicle not found in the parking lot.");
+                        System.out.println("Vehicle not found in the parking lot. Please check your vehicle number and try again.");
                     }
                     break;
 
@@ -217,7 +228,7 @@ public class Main {
         }
     }
 
-    // Helper Methods for Validation
+    // Helper Methods for to handle errors
     private static int getValidatedInt(Scanner scanner, String prompt, int min, int max) {
         while (true) {
             try {
